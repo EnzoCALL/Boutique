@@ -1,0 +1,59 @@
+<!DOCTYPE HTML>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <link rel="stylesheet"
+          href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u"
+          crossorigin="anonymous">
+
+    <style>
+	body {
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+	h1 {
+		margin-bottom: 40px;
+	}
+	form {
+		/* border: 1px black solid; */
+		display: grid;
+		grid-template-columns: 1fr 1fr;
+	}
+	.error-message {
+		grid-column: 1/span 2;
+		color: red;
+	}
+	button {
+		grid-column: 2/span 1;
+		margin-top: 40px;
+		margin-bottom: 40px;
+	}
+	</style>
+</head>
+
+<body>
+<h1>Register</h1>
+<form action="/user/registration" th:object="${user}" method="POST"
+      enctype="utf8">
+    <label>UserName</label> <input th:field="*{userName}" />
+    <p class="error-message"
+       th:each="error: ${#fields.errors('userName')}" th:text="${error}"></p>
+    <label>First Name</label> <input th:field="*{firstName}" />
+    <p class="error-message"
+       th:each="error: ${#fields.errors('firstName')}" th:text="${error}"></p>
+    <label>Last Name</label> <input th:field="*{lastName}" />
+    <p class="error-message"
+       th:each="error : ${#fields.errors('lastName')}" th:text="${error}"></p>
+    <label>Email</label> <input type="email" th:field="*{email}" />
+    <p class="error-message" th:each="error : ${#fields.errors('email')}"
+       th:text="${error}"></p>
+    <label>Password</label> <input type="password" th:field="*{password}" />
+    <p class="error-message"
+       th:each="error : ${#fields.errors('password')}" th:text="${error}"></p>
+    <button type="submit">Register</button>
+</form>
+
+<a href="/login">Login</a>
+</body>
+</html>

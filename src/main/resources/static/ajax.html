@@ -1,0 +1,152 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+          integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <title>Demo Spring Security</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <style>
+		table {
+			border-collapse: collapse;
+		}
+
+		table, th, td {
+			border: 1px solid black;
+			padding: 5px;
+		}
+		th {
+			background-color:lightgray;
+		}
+
+		h2 {
+			margin-bottom: 50px;;
+		}
+		form {
+			width:50%;
+			margin: auto;
+			display: grid;
+			grid-template-columns: 1fr 1fr;
+		}
+		form > a  {
+			grid-column: 1 / span 2;
+		}
+	</style>
+
+</head>
+
+<body onload="getProducts()">
+<div class="container">
+
+    <div class="jumbotron bg-light">
+        <h2>Boutique</h2>
+        <h4>AJAX version</h4>
+    </div>
+
+    <hr />
+
+
+    <table>
+        <thead>
+        <tr>
+            <th>Id</th>
+            <th>Title</th>
+            <th>Description</th>
+        </tr>
+        </thead>
+
+        <tbody id='table-body'>
+        </tbody>
+    </table>
+
+    <h2>Add a product with AJAX:</h2>
+    <div id="add-product">
+        <form class="" id="add-product-form">
+            <label>Title:</label><input type="text" id="ajax-title" name="ajax-title">
+            <label>Description:</label><input type="text" id="ajax-description" name="ajax-description">
+            <a href="#" onclick="addProduct();" class="btn btn-large btn-success">Add</a>
+        </form>
+    </div>
+
+
+    <script type="text/javascript">
+
+			let url = "http://localhost:8080/api/";
+			let username = "mrbean";
+			let password = "beanpassword";
+
+				function getProducts() {
+					console.log('-----------> AVANT');
+
+					fetch(url + "products", {
+						headers: {
+							"accept": "application/json",
+							"Content-Type": "application/json",
+							"Authorization": "Basic " + btoa(`${username}:${password}`)
+						}
+					})
+						.then(function (response) {
+							console.log(response);
+							return response.json()
+						})
+						.then(function (json) {
+							console.log(json);
+
+							let html = ''
+							for (let i = 0; i < json.length; i++) {
+							 	let product = json[i];
+							 	html += `<tr>
+				 					<td>${product.id}</td>
+				 					<td>${product.title}</td>
+				 					<td>${product.description}</td>
+				 				</tr> `;
+							}
+							document.getElementById('table-body').innerHTML = html;
+						});
+
+					console.log('-----------> APRES');
+			}
+
+			function addProduct() {
+				let title = document.getElementById("ajax-title").value;
+				let description = document.getElementById("ajax-description").value;
+
+				console.log(title, description);
+
+				let payload = {
+					"title": title,
+					"description": description
+				};
+
+				console.log("payload: ", payload);
+
+				/*  FETCH  */
+				(async () => {
+					const rawResponse = await fetch(url + 'products', {
+						method: 'POST',
+						headers: {
+							'Accept': 'application/json',
+							'Content-Type': 'application/json'
+						},
+						body: JSON.stringify(payload)
+					});
+					const content = await rawResponse.json();
+
+					console.log(content);
+
+	      			getProducts(); // reload with HTTP GET
+				})();
+			}
+
+		</script>
+
+    <hr />
+    <p>
+        <a href="/" class="btn btn-large btn-primary">Home</a>
+    </p>
+</div>
+</body>
+
+</html>
